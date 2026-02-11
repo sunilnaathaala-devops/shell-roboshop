@@ -24,7 +24,6 @@ VALIDATE(){
     fi
 }
 
-
 dnf module disable nodejs -y &>>$LOGS_FILE
 VALIDATE $? "Disabling NodeJS default version"
 
