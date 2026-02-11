@@ -24,8 +24,6 @@ VALIDATE(){
     fi
 }
 
-#cp catalogue.service /etc/yum.repos.d/catalogue.service
-VALIDATE $? "copying Catalogue Service"
 
 dnf module disable nodejs -y &>>$LOGS_FILE
 VALIDATE $? "Disabling NodeJS default version"
@@ -36,8 +34,8 @@ VALIDATE $? "Enabling NodeJS 20 version"
 dnf install nodejs -y &>>$LOGS_FILE
 VALIDATE $? "Installing nodeJS"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
-VALIDATE $? "Adding system user:roboshop"
+useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
+VALIDATE $? "Creating system user roboshop"
 
 mkdir -p /app 
 VALIDATE $? "creating app directory"
@@ -45,15 +43,4 @@ VALIDATE $? "creating app directory"
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
 VALIDATE $? "Downloading Catalogue code"
 
-cd /app 
-unzip /tmp/catalogue.zip
 
-
-systemctl start nodejs 
-VALIDATE $? "Start Mongodb"
-
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
-VALIDATE $? "Allowing remote connections"
-
-systemctl restart mongod 
-VALIDATE $? "Restarted Mongodb"
